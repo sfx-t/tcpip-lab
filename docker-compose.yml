@@ -1,0 +1,32 @@
+services:
+  # 簡単な HTTP サーバー（Python の標準機能）
+  server:
+    image: python:3.12-alpine
+    working_dir: /site
+    command: sh -c "python -m http.server 8000"
+    volumes:
+      - ./site:/site:ro
+    networks:
+      - labnet
+
+  # ツールが一通り入ったクライアント
+  client:
+    image: nicolaka/netshoot:latest
+    command: ["sh", "-c", "sleep infinity"]
+    networks:
+      - labnet
+
+  # server と同じネット名前空間で動くスニファ
+  sniffer:
+    image: nicolaka/netshoot:latest
+    network_mode: "service:server"   # server の eth0 を共有
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command: ["sh", "-c", "sleep infinity"]
+    depends_on:
+      - server
+
+networks:
+  labnet:
+    driver: bridge
