@@ -1,66 +1,66 @@
 # TCP/IP Lab
 
-TCP/IPネットワークの学習とデバッグのためのDockerベースの実験環境です。
+Docker-based experimental environment for learning and debugging TCP/IP networks.
 
-## 概要
+## Overview
 
-このプロジェクトは、Docker Composeを使用して3つのコンテナを起動し、TCP/IPネットワークの動作を学習・観察できる環境を提供します。
+This project provides an environment to learn and observe TCP/IP network behavior using Docker Compose to start three containers.
 
-- **サーバー**: Python標準のHTTPサーバーを実行
-- **クライアント**: ネットワークツール一式を含むコンテナ
-- **スニファー**: サーバーと同じネットワーク名前空間でパケットキャプチャが可能
+- **Server**: Runs Python standard HTTP server
+- **Client**: Container with a complete set of network tools
+- **Sniffer**: Can capture packets in the same network namespace as the server
 
-## 必要な環境
+## Requirements
 
 - Docker
 - Docker Compose
 
-## 使い方
+## Usage
 
-### 環境の起動
+### Starting the Environment
 
 ```bash
 docker-compose up -d
 ```
 
-### コンテナへの接続
+### Connecting to Containers
 
-クライアントコンテナに接続:
+Connect to the client container:
 ```bash
 docker-compose exec client sh
 ```
 
-スニファーコンテナに接続:
+Connect to the sniffer container:
 ```bash
 docker-compose exec sniffer sh
 ```
 
-### HTTPサーバーへのアクセス
+### Accessing the HTTP Server
 
-クライアントコンテナ内から:
+From within the client container:
 ```bash
 curl http://server:8000
 ```
 
-### パケットキャプチャ
+### Packet Capture
 
-スニファーコンテナ内で:
+Within the sniffer container:
 ```bash
 tcpdump -i eth0 -n
 ```
 
-### 環境の停止
+### Stopping the Environment
 
 ```bash
 docker-compose down
 ```
 
-## アーキテクチャ
+## Architecture
 
-- すべてのコンテナは `labnet` というブリッジネットワークで接続
-- スニファーコンテナはサーバーと同じネットワーク名前空間を共有（`network_mode: "service:server"`）
-- スニファーには `NET_ADMIN` と `NET_RAW` のケーパビリティを付与
+- All containers are connected via a bridge network called `labnet`
+- The sniffer container shares the same network namespace as the server (`network_mode: "service:server"`)
+- The sniffer is granted `NET_ADMIN` and `NET_RAW` capabilities
 
-## 提供されるWebページ
+## Provided Web Page
 
-`site/index.html` にシンプルなHTMLページが含まれており、HTTPサーバーを通じて配信されます。
+A simple HTML page is included in `site/index.html` and served through the HTTP server.
